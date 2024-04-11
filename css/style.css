@@ -1,0 +1,137 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+
+body,
+p,
+li {
+
+    font-size: .8rem;
+
+}
+
+
+body {
+    font-family: Roboto, sans-serif;
+}
+
+body:after {
+    content: "";
+    background: linear-gradient(to top, rgb(47, 61, 47), #f8f8f8);
+    position: fixed;
+    z-index: -1;
+
+
+    top: 10px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("https://web-presence.biz/img/MA_Logo.png");
+    background-repeat: no-repeat;
+    background-position: top left;
+
+    filter: grayscale(100%);
+    opacity: .2;
+
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-family: "Passion One", cursive;
+}
+
+
+.hide {
+    display: none;
+}
+
+.thumbNailRow img {
+    max-height: 60px;
+}
+
+.thumbNailRow img.active {
+    max-height: 60px;
+    border: yellow 2px solid;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+
+#globalAlert {
+    text-align: center;
+    position: fixed;
+    top: 10%;
+    right: 0;
+    left: 0;
+    padding: 1rem;
+    z-index: 1031;
+
+}
+
+/*START  TEASER CSS*/
+#optionList .img-thumbnail {
+
+
+    padding: 0rem;
+    background-color: transparent;
+    border: none;
+    border-radius: 0px;
+    max-width: 100%;
+    height: auto;
+    overflow: hidden;
+
+}
+
+/*START MAP*/
+#MapTarget iframe {
+    display: block;
+    width: 100%;
+    height: 250px;
+}
+
+@media print {
+
+    footer,
+    nav,
+    .noPrint {
+        display: none;
+    }
+
+    .printOnly {
+        display: block;
+    }
+
+}
+
+/*END PRINT MEDIA*/
+
+.mobileOnly {
+    display: none;
+}
+
+.desktopOnly {
+    display: block;
+}
+
+.printOnly {
+    display: none;
+}
+
+
+
+@media (max-width: 768px) {
+
+    .mobileOnly {
+        display: block;
+    }
+
+    .desktopOnly {
+        display: none;
+    }
+
+
+
+}
