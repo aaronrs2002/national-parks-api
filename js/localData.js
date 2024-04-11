@@ -23,7 +23,6 @@ let localData = [{
         "KY",
         "LA",
         "ME",
-        "MH",
         "MD",
         "MA",
         "MI",
