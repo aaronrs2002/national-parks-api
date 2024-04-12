@@ -10,7 +10,6 @@ let localData = [{
         "CT",
         "DE",
         "DC",
-        "FM",
         "FL",
         "GA",
         "GU",
