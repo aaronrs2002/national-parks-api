@@ -113,6 +113,9 @@ function selectPark(chosenPark) {
     if (result[chosenPark].images.length <= 1) {
         document.getElementById("carouselBtRow").classList.add("hide");
         document.querySelector(".carouselIndexParent").classList.add("hide");
+    } else {
+        document.getElementById("carouselBtRow").classList.remove("hide");
+        document.querySelector(".carouselIndexParent").classList.remove("hide");
     }
 
     if (document.querySelector(".list-group-item[data-id]")) {
