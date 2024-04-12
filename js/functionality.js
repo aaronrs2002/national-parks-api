@@ -74,6 +74,7 @@ function selectPark(chosenPark) {
             imagesHTML = imagesHTML + "<li class='" + standardClass + "' data-image='" + j + "' onClick='setImageActive(" + j + ")' ></li>";
 
         }
+
     } catch (error) {
         console.error(error);
     }
@@ -108,6 +109,11 @@ function selectPark(chosenPark) {
     document.getElementById("MapTarget").innerHTML = "<iframe  src='https://www.google.com/maps/embed/v1/place?key=" + account[0].MapInfo
         + "&amp;q=" + result[chosenPark].latitude + "," + result[chosenPark].longitude + "&zoom=9' allowfullscreen=''></iframe>";
     document.getElementById("contactTarget").innerHTML = contactHTML;
+
+    if (result[chosenPark].images.length <= 1) {
+        document.getElementById("carouselBtRow").classList.add("hide");
+        document.querySelector(".carouselIndexParent").classList.add("hide");
+    }
 
     if (document.querySelector(".list-group-item[data-id]")) {
         if (document.querySelector(".list-group-item[data-id='" + chosenPark + "']")) {
