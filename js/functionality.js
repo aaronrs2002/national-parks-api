@@ -1,36 +1,32 @@
-/*START MOBILE COLLAPSE NAV*/
-//let stateSelected = "default";
-let result;
 
+let result;
+const collapseList = ["show", "animated", "fadeIn"];
+const navElem = document.getElementById("collapsingNav");
+let stateListHTML = "<option value='default'>Select a State</option>";
 try {
     result = JSON.parse(localStorage.getItem("result"));
 } catch (error) {
     console.error(error);
-
 }
 
-
-
+let activePark = 0;
+let activeImage = 0;
 let parkHTML = "";
-
+/*START MOBILE COLLAPSE NAV*/
 function toggleMobileNav() {
-    const collapseList = ["show", "animated", "fadeIn"];
-    const navElem = document.getElementById("collapsingNav");
-    try {
-        if (document.querySelector(".navbar-collapse.show").length) {
-            /*WHEN THIS ELEMENT DOES NOT EXIST THE CATCH ERROR WILL CREATE IT*/
-        } else {
-            for (let i = 0; i < collapseList.length; i++) {
-                navElem.classList.remove(collapseList[i]);
-            }
+    if (document.querySelector(".navbar-collapse.show") !== null) {
+        console.log("should have HIDDEN the menu")
+        for (let i = 0; i < collapseList.length; i++) {
+            navElem.classList.remove(collapseList[i]);
         }
-    } catch (error) {
+    } else {
         for (let i = 0; i < collapseList.length; i++) {
             navElem.classList.add(collapseList[i]);
+            console.log("should have SHOWN the menu 2")
         }
     }
 }
-let stateListHTML = "<option value='default'>Select a State</option>";
+
 for (let i = 0; i < localData[0].usStates.length; i++) {
     stateListHTML = stateListHTML + "<option value='" + localData[0].usStates[i] + "'>" + localData[0].usStates[i] + "</option>";
 }
@@ -38,18 +34,27 @@ for (let i = 0; i < localData[0].usStates.length; i++) {
     e.innerHTML = stateListHTML;
 });
 
-
-function viewImage(cardNum, imgNum) {
-    if (document.querySelector("img[data-id='" + imgNum + "']")) {
-        document.querySelector("div.card[data-id='" + cardNum + "'] img.card-img-top").setAttribute("src", result[cardNum].images[imgNum].url);
-        [].forEach.call(document.querySelectorAll("img[data-id]"), (e) => {
-            e.classList.remove("active");
-        });
-        document.querySelector("img[data-id='" + imgNum + "']").classList.add("active");
+//START IMAGE CAROUSEL
+function carouselMove(direction) {
+    let tempActiveImg = activeImage;
+    let imageListLength = parseInt(result[activePark].images.length);
+    if (direction === "next") {
+        tempActiveImg = tempActiveImg + 1;
+        if (tempActiveImg >= imageListLength) {
+            setImageActive(0);
+        } else {
+            setImageActive(tempActiveImg);
+        }
     }
-
+    if (direction === "previous") {
+        tempActiveImg = tempActiveImg - 1;
+        if (tempActiveImg < 0) {
+            setImageActive(imageListLength - 1);
+        } else {
+            setImageActive(tempActiveImg);
+        }
+    }
 }
-
 
 /*START GET PARK LIST*/
 function selectPark(chosenPark) {
@@ -57,53 +62,38 @@ function selectPark(chosenPark) {
     parkHTML = "";
     let contactHTML = "";
     let activitiesHTML = "";
+    activePark = chosenPark;
     document.getElementById("parkInfoTarget").innerHTML = "";
-
     try {
         for (let j = 0; j < result[chosenPark].images.length; j++) {/*GATHER ALL IMAGES IN ARRAY*/
-            let firstActive = "";
-            if (j === 0) {
-                firstActive = " active";
-            }
 
-            imagesHTML = imagesHTML
-                + "<div class='col d-flex justify-content-center'><img data-id='" + j + "' src=" + result[chosenPark].images[j].url
-                + " class='img-thumbnail pointer " + firstActive + "' onClick='viewImage(" + chosenPark + "," + j + ")' alt='"
-                + result[chosenPark].images[j].altText + "'  title='"
-                + result[chosenPark].images[j].title
-                + " credit: " + result[chosenPark].images[j].credit + "' /></div>";
+            let standardClass = 'sliderIndex';
+            if (j === 0) {
+                standardClass = 'sliderIndex active';
+            }
+            imagesHTML = imagesHTML + "<li class='" + standardClass + "' data-image='" + j + "' onClick='setImageActive(" + j + ")' ></li>";
+
         }
     } catch (error) {
         console.error(error);
     }
-
-
-
-
-
-
-
     for (let j = 0; j < result[chosenPark].addresses.length; j++) {/*GATHER ALL ADDRESSES IN ARRAY*/
         if (j === 0 || result[chosenPark].addresses[j].line3 !== result[chosenPark].addresses[j - 1].line3) {
             contactHTML = contactHTML
                 + "<li><ul class='list-unstyled'><li>" + result[chosenPark].addresses[j].line1 + "</li><li>" + result[chosenPark].addresses[j].line2 + "</li><li>" + result[chosenPark].addresses[j].line3
                 + "</li><li>" + result[chosenPark].addresses[j].city + ", " + result[chosenPark].addresses[j].stateCode + " " + result[chosenPark].addresses[j].postalCode + "</li></ul>";
         }
-
     }
-
-
     for (let j = 0; j < result[chosenPark].activities.length; j++) {/*GATHER ALL ACTIVITIES IN ARRAY*/
         if (j === 0) {
             activitiesHTML = "Activities: ";
         }
         activitiesHTML = activitiesHTML + "<span class='badge text-bg-secondary'>" + result[chosenPark].activities[j].name + "</span>";
     }
-
     /*GATHER ALL COLLECTED STRINGS FROM OUR FOR LOOPS AND BUILD OUR MAIN STAGE HTML (#parkInfoTarget)*/
-    parkHTML = parkHTML + "<div class='card ' data-id='" + chosenPark + "'><div class='card-body'><h5 class='card-title'>" + result[chosenPark].fullName
-        + ", " + result[chosenPark].addresses[0].stateCode + "</h5><ul class='list-unstyled'><li><div class='row thumbNailRow' >" + imagesHTML
-        + "</div></li><li><img src='" + result[chosenPark].images[0].url
+    parkHTML = parkHTML + "<div class='card ' data-id='" + chosenPark + "'><div class='card-body'><div ><h5 class='card-title'>" + result[chosenPark].fullName
+        + ", " + result[chosenPark].addresses[0].stateCode + "</h5><ul class='carouselIndexParent' data-carousel='image'>" + imagesHTML
+        + "</ul></div><ul class='list-unstyled'><li></li><li><img id='firstImg' src='" + result[chosenPark].images[0].url
         + "' class='card-img-top' alt='" + result[chosenPark].images[0].credit
         + "'/></li><li><hr/><p>" + result[chosenPark].description
         + "</p><p>" + result[chosenPark].operatingHours[0].description + "</p>" + activitiesHTML + "</p><p>" + result[chosenPark].directionsInfo
@@ -113,7 +103,6 @@ function selectPark(chosenPark) {
         + "</a></li><li>Website: <a href='" + result[chosenPark].url + "' target='_blank'>" +
         result[chosenPark].url + "</a></li><li class='text-secondary'><small><i>Weather Info: " +
         result[chosenPark].weatherInfo + "</i></small></li></ul></div></div>";
-
     document.getElementById("parkInfoTarget").innerHTML = parkHTML;
     /*ONCE #parkInfoTarget IS BUILT #MapTarget, #contactTarget EXIST, NOT BEFORE*/
     document.getElementById("MapTarget").innerHTML = "<iframe  src='https://www.google.com/maps/embed/v1/place?key=" + account[0].MapInfo
@@ -128,15 +117,11 @@ function selectPark(chosenPark) {
             document.querySelector(".list-group-item[data-id='" + chosenPark + "']").classList.add("active");
         }
     }
-
-
 }
 
 function buildList(data, stateSelected) {
-
     optionListHTML = "";
     let postFirst = false;
-
     for (let i = 0; i < data.length; i++) {
         if (data[i].addresses[0].stateCode == stateSelected) {
             let firstActive = "";
@@ -158,6 +143,9 @@ function buildList(data, stateSelected) {
 
 /* START HERE WITH API CALL TO developer.nps.gov*/
 async function getParkList(firstRun) {
+    if (firstRun === false) {
+        toggleMobileNav();
+    }
     stateSelected = document.getElementById("stateSelected").value;
     let randomNum = Math.floor(Math.random() * localData[0].usStates.length);
     if (stateSelected === "default") {
@@ -174,36 +162,29 @@ async function getParkList(firstRun) {
             }
             stateSelected = localData[0].usStates[randomNum];
             document.getElementById("stateSelected").selectedIndex = randomNum + 1;
-        } else {
-            return false;
         }
-
     }
 
-
     if (stateSelected.length == 2) {
-
         try {
             const response = await fetch("https://developer.nps.gov/api/v1/parks?stateCode=" + stateSelected + "&limit=600&api_key=" + account[0].npsKey);
-
             result = await response.json();
-
             if (response.status > 399 && response.status < 500) {
                 globalAlert("alert-danger", "You might need an API key for the\"accountData.js\" file in the \"config\" folder.");
-
+                return false;
             }
-
+            if (response.status >= 500) {
+                globalAlert("alert-danger", "There was a server side error: " + response.status);
+                return false;
+            }
             result = result.data;
             localStorage.setItem("result", JSON.stringify(result));
             localStorage.setItem("stateSelected", stateSelected);
-
             buildList(result, stateSelected);
-
             if (optionListHTML.length === 0) {
                 globalAlert("alert-warning", "No results for " + stateSelected);
                 return false;
             }
-
         } catch (error) {
             console.log("Error: " + error);
             buildList(JSON.parse(localStorage.getItem("result")), localStorage.getItem("stateSelected"));
@@ -214,8 +195,19 @@ async function getParkList(firstRun) {
         return false;
     }
 }
-
 getParkList(true);
+
+function setImageActive(imgNum) {
+    activeImage = imgNum;
+    document.getElementById("firstImg").setAttribute("src", result[activePark].images[imgNum].url);
+    document.getElementById("firstImg").setAttribute("alt", result[activePark].images[imgNum].credit);
+    [].forEach.call(document.querySelectorAll("li.sliderIndex[data-image]"), (e) => {
+        e.classList.remove("active");
+    });
+    document.querySelector("li.sliderIndex[data-image='" + imgNum + "']").classList.add("active");
+}
+
+
 /*
 {
             "id": "F2A0D649-ED66-4BB7-A3EC-001CC42921CF",
