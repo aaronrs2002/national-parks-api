@@ -63,6 +63,7 @@ function selectPark(chosenPark) {
     let contactHTML = "";
     let activitiesHTML = "";
     activePark = chosenPark;
+    activeImage = 0;
     document.getElementById("parkInfoTarget").innerHTML = "";
     try {
         for (let j = 0; j < result[chosenPark].images.length; j++) {/*GATHER ALL IMAGES IN ARRAY*/
