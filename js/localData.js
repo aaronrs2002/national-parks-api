@@ -42,7 +42,6 @@ let localData = [{
         "OH",
         "OK",
         "OR",
-        "PW",
         "PA",
         "PR",
         "RI",
